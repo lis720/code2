@@ -1,7 +1,14 @@
+// code 2
+// section a
+// bfa dt
+// spring 2018
+// bryan ma
+
+// week 3
+// pong
+
 var ball;
 var p1, p2;
-var studentC;
-
 var p1Up = false;
 var p1Down = false;
 var p2Up = false;
@@ -21,7 +28,6 @@ function setup() {
   ball = new Ball();
   p1 = new Paddle(0);
   p2 = new Paddle(1);
-  studentC = new studentColliders();
 }
 
 function draw() {
@@ -41,12 +47,6 @@ function draw() {
   // this could be done in a loop, with all the objects that the students make.
   checkCollision(ball, p1);
   checkCollision(ball, p2);
-
-  //studentC.star(studentC.pos.x, studentC.pos.y, studentC.size1, studentC.size2, studentC.side);
-  studentC.update();
-  studentC.display();
-  studentC.collided(p1);
-  studentC.collided(p2);
 }
 
 // should this be global? 
@@ -132,22 +132,22 @@ function Ball() {
   }
 
 
-  // // good for using simple approach
-  // this.checkCollision = function(paddle) {
+  // good for using simple approach
+  this.checkCollision = function(paddle) {
 
-  // }
+  }
 
-  // // good for arbitrary collisions.
-  // // make everybody make an object that has a collided method
-  // this.checkCollision = function(something) {
-  //   // if collided:
-  //   // something.collided();
-  // }
+  // good for arbitrary collisions.
+  // make everybody make an object that has a collided method
+  this.checkCollision = function(something) {
+    // if collided:
+    // something.collided();
+  }
 
-  // // different kinds of collision checking
-  // this.checkCollision = function(circleDist) {
+  // different kinds of collision checking
+  this.checkCollision = function(circleDist) {
 
-  // }
+  }
 
 };
 
@@ -193,19 +193,19 @@ function Paddle(num) {
 
   // this only makes sense if the paddle does something really specific to the ball? or to itself?
   // what makes more sense? the thing that is doing the brunt of the action?
-  // this.checkCollision = function(ball) {
+  this.checkCollision = function(ball) {
 
-  // }
+  }
 
-  // // this could be called from the ball's function, or from a global function
-  // this.collided = function(ball) {
+  // this could be called from the ball's function, or from a global function
+  this.collided = function(ball) {
 
-  // }
+  }
 
-  // // maybe we get a type, and then do something based on it? 
-  // this.collided = function(somethingElse) {
-  //   // if somethingElse.id ==
-  // }
+  // maybe we get a type, and then do something based on it? 
+  this.collided = function(somethingElse) {
+    // if somethingElse.id ==
+  }
 }
 
 
@@ -214,83 +214,24 @@ function Paddle(num) {
 // both have access to each other. 
 // do something visual!
 // 
-function studentColliders() {
-  this.pos = createVector(100, 50);
-  this.speed = 3;
-  this.angle = random(TWO_PI);
-  this.vel = createVector(cos(this.angle) * this.speed, sin(this.angle) * this.speed);
-  this.size1 = 8;
-  this.size2 = 20;
-  this.side = 3;
-  var point = this.side;
-  var scaleStar = 1;
-
-  this.star = function(x, y, radius1, radius2, npoints) {
-  var angle = TWO_PI / npoints;
-  var halfAngle = angle/2.0;
-  beginShape();
-  for (var a = 0; a < TWO_PI; a += angle) {
-    var sx = x + cos(a) * radius2;
-    var sy = y + sin(a) * radius2;
-    vertex(sx, sy);
-    sx = x + cos(a+halfAngle) * radius1;
-    sy = y + sin(a+halfAngle) * radius1;
-    vertex(sx, sy);
-    }
-    endShape(CLOSE);
-  }
+function studentColliders(x, y, angle, speed, size) {
+  this.id = 0;
+  this.pos = createVector(x, y);
+  this.speed = speed;
+  this.vel = createVector(cos(angle) * speed, sin(angle) * speed);
+  this.size = 10;
 
   this.update = function() {
-    if (this.pos.x < 10) {
-      this.pos = createVector(width/2, height/2);
-      point = 3;
-      scaleStar = 1;
-    } else if (this.pos.x > width - 10) {
-      this.pos = createVector(width/2, height/2);
-      point = 3;
-      scaleStar = 1;
-    }
-
-    if (this.pos.y < margin + 20 || 
-        this.pos.y > height - margin - 20) {
-      this.vel.y *= -1;
-      point ++;
-      scaleStar += 0.2;
-
-      if (scaleStar > 4){
-      	scaleStar = 1;
-      }
-    }
     this.pos.add(this.vel);
-
-    if (point >= 18) {
-    	point = 3;
-    }
   }
 
   this.display = function() {
     // draw something here
-    noStroke();
-    fill(255, 215 - random(100), 0);
-    push();
-    translate(this.pos.x, this.pos.y);
-    rotate(frameCount / 100.0);
-    scale(scaleStar);
-    this.star(0, 0, this.size1, this.size2, point); 
-    pop();
   }
 
-  this.collided = function(p) {
+  this.collided = function(other) {
     // do something cool here! do something to yourself,
     // and also something to the other thing?
-    if (this.pos.x + 20 > p.pos.x && this.pos.x + 20 < p.pos.x + p.width ||
-      this.pos.x - 20 > p.pos.x && this.pos.x - 20 < p.pos.x + p.width){
-    	if (this.pos.y > p.pos.y && this.pos.y < p.pos.y + p.height) {
-    		this.vel.x *= -1;
-      		point ++;
-      		scaleStar += 0.2;
-    	}
-    }
   }
 }
 
