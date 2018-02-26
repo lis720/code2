@@ -1,20 +1,16 @@
-// code 2
-// section a
-// bfa dt
-// spring 2018
-// bryan ma
-
-// week 3
-// pong
-
 var ball;
 var p1, p2;
+var Cookies;
+
 var p1Up = false;
 var p1Down = false;
 var p2Up = false;
 var p2Down = false;
 var margin = 20;
 var cnv;
+
+var poly = [];
+
 
 function centerCanvas() {
   var x = (windowWidth - width) / 2;
@@ -28,6 +24,11 @@ function setup() {
   ball = new Ball();
   p1 = new Paddle(0);
   p2 = new Paddle(1);
+  Cookies = new myCookies();
+
+  for (var i=0; i<100; i++) {
+    poly.push(new myCookies());
+  }
 }
 
 function draw() {
@@ -47,9 +48,26 @@ function draw() {
   // this could be done in a loop, with all the objects that the students make.
   checkCollision(ball, p1);
   checkCollision(ball, p2);
+
+  //myCookies.star(myCookies.pos.x, myCookies.pos.y, myCookies.size1, myC.size2, myC.side);
+  // myCookies.update();
+  // myCookies.display();
+  // myCookies.collided(p1);
+  // myCookies.collided(p2);
+
+  //draw arrays
+  for (var i=0; i<poly.length; i++) {
+    poly[i].update();
+    poly[i].display();
+    poly[i].collided(p1);
+    poly[i].collided(p2);
+
+
+  }
 }
 
 // should this be global? 
+// should!
 function checkCollision(b, p) {
   if (b.pos.x + b.size/2 > p.pos.x && b.pos.x + b.size/2 < p.pos.x + p.width ||
       b.pos.x - b.size/2 > p.pos.x && b.pos.x - b.size/2 < p.pos.x + p.width) {
@@ -132,22 +150,22 @@ function Ball() {
   }
 
 
-  // good for using simple approach
-  this.checkCollision = function(paddle) {
+  // // good for using simple approach
+  // this.checkCollision = function(paddle) {
 
-  }
+  // }
 
-  // good for arbitrary collisions.
-  // make everybody make an object that has a collided method
-  this.checkCollision = function(something) {
-    // if collided:
-    // something.collided();
-  }
+  // // good for arbitrary collisions.
+  // // make everybody make an object that has a collided method
+  // this.checkCollision = function(something) {
+  //   // if collided:
+  //   // something.collided();
+  // }
 
-  // different kinds of collision checking
-  this.checkCollision = function(circleDist) {
+  // // different kinds of collision checking
+  // this.checkCollision = function(circleDist) {
 
-  }
+  // }
 
 };
 
@@ -193,19 +211,19 @@ function Paddle(num) {
 
   // this only makes sense if the paddle does something really specific to the ball? or to itself?
   // what makes more sense? the thing that is doing the brunt of the action?
-  this.checkCollision = function(ball) {
+  // this.checkCollision = function(ball) {
 
-  }
+  // }
 
-  // this could be called from the ball's function, or from a global function
-  this.collided = function(ball) {
+  // // this could be called from the ball's function, or from a global function
+  // this.collided = function(ball) {
 
-  }
+  // }
 
-  // maybe we get a type, and then do something based on it? 
-  this.collided = function(somethingElse) {
-    // if somethingElse.id ==
-  }
+  // // maybe we get a type, and then do something based on it? 
+  // this.collided = function(somethingElse) {
+  //   // if somethingElse.id ==
+  // }
 }
 
 
@@ -214,24 +232,80 @@ function Paddle(num) {
 // both have access to each other. 
 // do something visual!
 // 
-function studentColliders(x, y, angle, speed, size) {
-  this.id = 0;
-  this.pos = createVector(x, y);
-  this.speed = speed;
-  this.vel = createVector(cos(angle) * speed, sin(angle) * speed);
-  this.size = 10;
+function myCookies() {
+  this.pos = createVector(width/2, 350);
+  this.speed = 3;
+  this.angle = random(TWO_PI);
+  this.vel = createVector(cos(this.angle) * this.speed, sin(this.angle) * this.speed);
+  this.size = 20;
+  this.side = 3;
+  var point = this.side;
+  var c = color(255, 204, 0);
+
+
+  this.polygon = function(x, y, radius, npoints) {
+  var angle = TWO_PI / npoints;
+  beginShape();
+  for (var a = 0; a < TWO_PI; a += angle) {
+    var sx = x + cos(a) * radius;
+    var sy = y + sin(a) * radius;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
+  }
 
   this.update = function() {
+    if (this.pos.x < 10) {
+      this.pos = createVector(width/2, height/2);
+      point = 3;
+    } else if (this.pos.x > width - 10) {
+      this.pos = createVector(width/2, height/2);
+      point = 3;
+    }
+
+    if (this.pos.y < margin + 20 || 
+        this.pos.y > height - margin - 20) {
+      this.vel.y *= -1;
+      point ++;
+    }
+
+    if (this.pos.x < margin + 10 || 
+        this.pos.x > width - margin - 10) {
+      this.vel.x *= -1;
+      point ++;
+    }
+
     this.pos.add(this.vel);
+
+    if (point >= 10) {
+    	point = 3;
+    }
   }
 
   this.display = function() {
     // draw something here
+    stroke(111, 78, 55);
+    fill(c);
+
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(frameCount / 100.0);
+    this.polygon(0, 0, this.size, point); 
+    pop();
   }
 
-  this.collided = function(other) {
+  this.collided = function(p) {
     // do something cool here! do something to yourself,
     // and also something to the other thing?
+    if (this.pos.x + 20 > p.pos.x && this.pos.x + 20 < p.pos.x + p.width ||
+      this.pos.x - 20 > p.pos.x && this.pos.x - 20 < p.pos.x + p.width){
+    	if (this.pos.y > p.pos.y && this.pos.y < p.pos.y + p.height) {
+    		this.vel.x *= -1;
+      		point ++;
+
+
+    	}
+    }
   }
 }
 

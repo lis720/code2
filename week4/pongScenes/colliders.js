@@ -39,35 +39,80 @@ function Bryan() {
   }
 }
 
-function Yizhou() {
-  var balls;
-
-  this.pos = createVector(width/2, height/2);
-  this.speed = 7;
+function myCookies() {
+  this.pos = createVector(width/2, 350);
+  this.speed = 3;
   this.angle = random(TWO_PI);
   this.vel = createVector(cos(this.angle) * this.speed, sin(this.angle) * this.speed);
-  this.size = 15;
-  
-  this.update = function() {
-    this.pos.add(this.vel);
+  this.size = 20;
+  this.side = 3;
+  var point = this.side;
+  var c = color(255, 204, 0);
+
+
+  this.polygon = function(x, y, radius, npoints) {
+  var angle = TWO_PI / npoints;
+  beginShape();
+  for (var a = 0; a < TWO_PI; a += angle) {
+    var sx = x + cos(a) * radius;
+    var sy = y + sin(a) * radius;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
   }
 
-  this.display = function() {
-    fill(255,30);
-    rectMode(CENTER);
-    rect(width/2,height/2,100,200);
-    noStroke();
-    fill(255);
-    rectMode(CENTER);
-    rect(this.pos.x, this.pos.y, this.size, this.size);
-    for (var i = 0; i < 600,this.pos.x=400 && this.pos.y>150&&this.pos.y<35; i++) {
-      balls[i].update();
-      balls[i].display();
+  this.update = function() {
+    if (this.pos.x < 10) {
+      this.pos = createVector(width/2, height/2);
+      point = 3;
+    } else if (this.pos.x > width - 10) {
+      this.pos = createVector(width/2, height/2);
+      point = 3;
+    }
+
+    if (this.pos.y < margin + 20 || 
+        this.pos.y > height - margin - 20) {
+      this.vel.y *= -1;
+      point ++;
+    }
+
+    if (this.pos.x < margin + 10 || 
+        this.pos.x > width - margin - 10) {
+      this.vel.x *= -1;
+      point ++;
+    }
+
+    this.pos.add(this.vel);
+
+    if (point >= 10) {
+      point = 3;
     }
   }
 
-  this.collided = function(other) {
-    balls = new Ball();
+  this.display = function() {
+    // draw something here
+    stroke(111, 78, 55);
+    fill(c);
+
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(frameCount / 100.0);
+    this.polygon(0, 0, this.size, point); 
+    pop();
+  }
+
+  this.collided = function(p) {
+    // do something cool here! do something to yourself,
+    // and also something to the other thing?
+    if (this.pos.x + 20 > p.pos.x && this.pos.x + 20 < p.pos.x + p.width ||
+      this.pos.x - 20 > p.pos.x && this.pos.x - 20 < p.pos.x + p.width){
+      if (this.pos.y > p.pos.y && this.pos.y < p.pos.y + p.height) {
+        this.vel.x *= -1;
+          point ++;
+
+
+      }
+    }
   }
 }
 
@@ -466,4 +511,55 @@ function Cat() {
     fill(random(0, 255), random(0, 255), random(0, 255));
   }
 }
+
+function Yang() {
+  this.pos = createVector(width/2, height/2);
+  this.speed = 5;
+  this.angle = 0;
+  this.vel = createVector(cos(this.angle) * this.speed, sin(this.angle) * this.speed);
+  this.width = 100;
+  this.height = 100;
+ 
+  
+
+  this.update = function() {
+  this.angle = (this.angle + 0.05) % TWO_PI;
+  this.vel.x = cos(this.angle) * this.speed;
+  this.vel.y = sin(this.angle) * this.speed;
+  this.pos.add(this.vel);
+
+
+  }
+
+  this.display = function(b,p) {
+    stroke(255);
+    if(p1Score>10 || p2Score>10){
+    fill(255,0,0,50);
+  } else {
+    fill(255,20);
+  }
+    
+  ellipse(width/2,height/2, b.pos.y-b.size/2, b.pos.y-b.size/2);
+  fill(color(map(sin(this.angle), -1, 1, 0, 255), map(cos(this.angle), -1, 1, 0, 255), random(20,40),130));
+  triangle(width/2,height/2,p.pos.x+p.width/2, p.pos.y+p.height/2,b.pos.x+b.size/2, b.pos.y+b.size/2);
+   
+  }
+  this.collided = function(b) {
+    var d = dist(b.pos.x,b.pos.y,width/2,height/2);
+     if(d < (b.pos.y-b.size/2)/2){
+     
+
+      for (var i =0; i <= b.pos.y-b.size/2; i+=15) {
+        background(random(0,255),255-d,d+200,5);
+        for(var j =10; j<=255; j+=15){
+
+          stroke(random(0,j),random(255-j,j),i,240);
+          noFill();
+          ellipse(width/2,height/2,i,i);
+
+       }
+      } 
+     }
+    }
+   }
 
